@@ -1,52 +1,48 @@
-(function($) {
-$(document).ready(function(){
-
-  // putting lines by the pre blocks
-  $("pre").each(function(){
-    var pre = $(this).text().split("\n");
-    var lines = new Array(pre.length+1);
-    for(var i = 0; i < pre.length; i++) {
-      var wrap = Math.floor(pre[i].split("").length / 70)
-      if (pre[i]==""&&i==pre.length-1) {
-        lines.splice(i, 1);
-      } else {
-        lines[i] = i+1;
-        for(var j = 0; j < wrap; j++) {
-          lines[i] += "\n";
-        }
-      }
-    }
-    $(this).before("<pre class='lines'>" + lines.join("\n") + "</pre>");
+var main = function() {
+  $('.dropdown-toggle').click(function() {
+    $('.dropdown-menu').toggle();
   });
 
-  var headings = [];
+  
+  $('.arrow-next').click(function() {
+    var currentSlide = $('.active-slide');
+    var nextSlide = currentSlide.next();
 
-  var collectHeaders = function(){
-    headings.push({"top":$(this).offset().top - 15,"text":$(this).text()});
-  }
+    var currentDot = $('.active-dot');
+    var nextDot = currentDot.next();
 
-  if($(".markdown-body h1").length > 1) $(".markdown-body h1").each(collectHeaders)
-  else if($(".markdown-body h2").length > 1) $(".markdown-body h2").each(collectHeaders)
-  else if($(".markdown-body h3").length > 1) $(".markdown-body h3").each(collectHeaders)
-
-  $(window).scroll(function(){
-    if(headings.length==0) return true;
-    var scrolltop = $(window).scrollTop() || 0;
-    if(headings[0] && scrolltop < headings[0].top) {
-      $(".current-section").css({"opacity":0,"visibility":"hidden"});
-      return false;
+    if(nextSlide.length === 0) {
+      nextSlide = $('.slide').first();
+      nextDot = $('.dot').first();
     }
-    $(".current-section").css({"opacity":1,"visibility":"visible"});
-    for(var i in headings) {
-      if(scrolltop >= headings[i].top) {
-        $(".current-section .name").text(headings[i].text);
-      }
-    }
+    
+    currentSlide.fadeOut(600).removeClass('active-slide');
+    nextSlide.fadeIn(600).addClass('active-slide');
+
+    currentDot.removeClass('active-dot');
+    nextDot.addClass('active-dot');
   });
 
-  $(".current-section a").click(function(){
-    $(window).scrollTop(0);
-    return false;
-  })
-});
-})(jQuery)
+
+  $('.arrow-prev').click(function() {
+    var currentSlide = $('.active-slide');
+    var prevSlide = currentSlide.prev();
+
+    var currentDot = $('.active-dot');
+    var prevDot = currentDot.prev();
+
+    if(prevSlide.length === 0) {
+      prevSlide = $('.slide').last();
+      prevDot = $('.dot').last();
+    }
+    
+    currentSlide.fadeOut(600).removeClass('active-slide');
+    prevSlide.fadeIn(600).addClass('active-slide');
+
+    currentDot.removeClass('active-dot');
+    prevDot.addClass('active-dot');
+  });
+
+}
+
+$(document).ready(main);
